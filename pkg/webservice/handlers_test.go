@@ -470,7 +470,9 @@ func TestGetClusterUtilJSON(t *testing.T) {
 	partition := schedulerContext.GetPartition(partitionName)
 	assert.Equal(t, partitionName, partition.Name)
 	// new app to partition
-	appID := "appID-1"
+	const (
+		appID = "appID-1"
+	)
 	app := newApplication(appID, partitionName, queueName, rmID, security.UserGroup{})
 	err := partition.AddApplication(app)
 	assert.NilError(t, err, "add application to partition should not have failed")
@@ -537,17 +539,21 @@ func TestGetNodesUtilJSON(t *testing.T) {
 	partition := setup(t, configDefault, 1)
 
 	// create test application
-	appID := "app1"
+	const (
+		appID = "app1"
+	)
 	app := newApplication(appID, partition.Name, queueName, rmID, security.UserGroup{})
 	err := partition.AddApplication(app)
 	assert.NilError(t, err, "add application to partition should not have failed")
 
 	// create test nodes
+	const (
+		node1ID = "node-1"
+		node2ID = "node-2"
+	)
 	nodeRes := resources.NewResourceFromMap(map[string]resources.Quantity{siCommon.Memory: 1000, siCommon.CPU: 1000}).ToProto()
 	nodeRes2 := resources.NewResourceFromMap(map[string]resources.Quantity{siCommon.Memory: 1000, siCommon.CPU: 1000, "GPU": 10}).ToProto()
-	node1ID := "node-1"
 	node1 := objects.NewNode(&si.NodeInfo{NodeID: node1ID, SchedulableResource: nodeRes})
-	node2ID := "node-2"
 	node2 := objects.NewNode(&si.NodeInfo{NodeID: node2ID, SchedulableResource: nodeRes2})
 
 	// create test allocations
@@ -640,10 +646,12 @@ func TestPartitions(t *testing.T) {
 	NewWebApp(schedulerContext, nil)
 
 	// create test nodes
+	const (
+		node1ID = "node-1"
+		node2ID = "node-2"
+	)
 	nodeRes := resources.NewResourceFromMap(map[string]resources.Quantity{siCommon.Memory: 500, siCommon.CPU: 500}).ToProto()
-	node1ID := "node-1"
 	node1 := objects.NewNode(&si.NodeInfo{NodeID: node1ID, SchedulableResource: nodeRes})
-	node2ID := "node-2"
 	node2 := objects.NewNode(&si.NodeInfo{NodeID: node2ID, SchedulableResource: nodeRes})
 
 	// create test allocations
@@ -783,16 +791,20 @@ func TestGetPartitionNodes(t *testing.T) {
 	partition := setup(t, configDefault, 1)
 
 	// create test application
-	appID := "app1"
+	const (
+		appID = "app1"
+	)
 	app := newApplication(appID, partition.Name, queueName, rmID, security.UserGroup{User: "testuser", Groups: []string{"testgroup"}})
 	err := partition.AddApplication(app)
 	assert.NilError(t, err, "add application to partition should not have failed")
 
 	// create test nodes
+	const (
+		node1ID = "node-1"
+		node2ID = "node-2"
+	)
 	nodeRes := resources.NewResourceFromMap(map[string]resources.Quantity{siCommon.Memory: 1000, siCommon.CPU: 1000}).ToProto()
-	node1ID := "node-1"
 	node1 := objects.NewNode(&si.NodeInfo{NodeID: node1ID, SchedulableResource: nodeRes})
-	node2ID := "node-2"
 	node2 := objects.NewNode(&si.NodeInfo{NodeID: node2ID, SchedulableResource: nodeRes})
 
 	// create test allocations
@@ -883,7 +895,9 @@ func TestGetQueueApplicationsHandler(t *testing.T) {
 	app := addApp(t, "app-1", part, "root.default", false)
 
 	// add placeholder to test PlaceholderDAOInfo
-	tg := "tg-1"
+	const (
+		tg = "tg-1"
+	)
 	res := &si.Resource{
 		Resources: map[string]*si.Quantity{"vcore": {Value: 1}},
 	}
@@ -1121,8 +1135,10 @@ func TestValidateQueue(t *testing.T) {
 	err := validateQueue("root.test.test123")
 	assert.NilError(t, err, "Queue path is correct but stil throwing error.")
 
-	invalidQueuePath := "root.test.test123@"
-	invalidQueueName := "test123@"
+	const (
+		invalidQueuePath = "root.test.test123@"
+		invalidQueueName = "test123@"
+	)
 	err1 := validateQueue(invalidQueuePath)
 	assert.Error(t, err1, "problem in queue query parameter parsing as queue param "+invalidQueuePath+" contains invalid queue name "+invalidQueueName+". Queue name must only have alphanumeric characters, - or _, and be no longer than 64 characters")
 
@@ -1162,7 +1178,9 @@ func TestGetLoggerLevel(t *testing.T) {
 	handler := http.HandlerFunc(getLogLevel)
 	handler.ServeHTTP(rr, req)
 
-	expected := "debug"
+	const (
+		expected = "debug"
+	)
 	assert.Equal(t, rr.Body.String(), expected,
 		fmt.Sprintf("handler returned unexpected body: got %v want %v", rr.Body.String(), expected))
 	assert.Equal(t, rr.Code, http.StatusOK)
@@ -1335,7 +1353,9 @@ func prepareUserAndGroupContext(t *testing.T) {
 	assert.NilError(t, err, "ask should have been added to app")
 
 	// add an alloc
-	uuid := "uuid-1"
+	const (
+		uuid = "uuid-1"
+	)
 	allocInfo := objects.NewAllocation(uuid, "node-1", ask)
 	app.AddAllocation(allocInfo)
 	assert.Assert(t, app.IsStarting(), "Application did not return starting state after alloc: %s", app.CurrentState())
